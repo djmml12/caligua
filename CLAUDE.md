@@ -48,13 +48,36 @@ npm run build
 npm run preview
 ```
 
-### Instalación 24/7 (Linux Mint)
-```bash
-chmod +x ./install-linux-24x7-autostart.sh
-./install-linux-24x7-autostart.sh
+### Despliegue Windows → USB → Linux Mint
+
+Empaquetar en Windows (PowerShell):
+```powershell
+./pack-for-linux.ps1   # genera pos-fenix-YYYYMMDD-HHMM.tar.gz limpio en el Escritorio
 ```
 
-Variables opcionales antes de ejecutar el script: `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `PUBLIC_PORT`. El script instala paquetes, configura PostgreSQL, crea admin, compila el frontend, configura nginx, registra el servicio systemd y un healthcheck.
+`pack-for-linux.ps1` excluye `node_modules`, `dist`, `.git`, `.env` y artefactos Windows que rompen el despliegue.
+
+En Linux Mint, tras extraer el `.tar.gz`:
+```bash
+chmod +x install-linux-24x7-autostart.sh deploy.sh
+
+# Primera instalación (30–40 min, hace TODO)
+./install-linux-24x7-autostart.sh
+
+# Actualizaciones posteriores (1–3 min)
+./deploy.sh
+```
+
+`deploy.sh` detecta y limpia `node_modules` con binarios Windows, convierte CRLF→LF, hace `npm install`, recompila los frontends, los republica en `/var/www/pos-fenix/{tablet,mobile}` y reinicia el backend.
+
+Variables opcionales del install script: `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `PUBLIC_PORT`.
+
+### Portabilidad Windows ↔ Linux
+
+- `.gitattributes` fuerza LF en todos los archivos de texto.
+- `.editorconfig` mantiene LF + UTF-8 + 2-spaces en cualquier editor.
+- Los `.sh` están marcados `+x` en git (`100755`).
+- **Nunca** copies `node_modules` o `dist` entre sistemas — el `.gitignore` y `pack-for-linux.ps1` ya los excluyen.
 
 ## Layout
 
