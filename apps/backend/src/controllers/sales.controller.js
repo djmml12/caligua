@@ -7,6 +7,7 @@ import {
   paySaleService,
   paySaleWithTipService,
   cancelSaleService,
+  getPaidSalesTodayService,
 } from "../services/sales.service.js";
 
 /**
@@ -82,6 +83,17 @@ export const paySaleWithTip = async (req, res) => {
   } catch (error) {
     console.error("PAY SALE TIP ERROR:", error);
     res.status(400).json({ success: false, message: error.message || "Error cobrando con propina" });
+  }
+};
+
+export const getPaidSales = async (req, res) => {
+  try {
+    const date = req.query.date || null;
+    const sales = await getPaidSalesTodayService(date);
+    res.json({ success: true, data: sales });
+  } catch (error) {
+    console.error("GET PAID SALES ERROR:", error);
+    res.status(500).json({ success: false, message: "Error obteniendo ventas cobradas" });
   }
 };
 

@@ -946,6 +946,181 @@
   }
 }
 
+/* ── History (ventas cobradas) overlay ──────────────────────── */
+
+.ps-history-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--canvas);
+  display: flex;
+  flex-direction: column;
+  animation: ps-slide-in 260ms var(--ease) both;
+}
+
+.ps-history-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.ps-history-title {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.ps-history-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--canvas);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.ps-history-date:focus {
+  border-color: var(--primary);
+}
+
+.ps-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ps-history-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--border);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ps-history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ps-history-ref {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ps-history-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ps-history-seller {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ps-history-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ps-history-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ps-history-tip {
+  font-size: 11px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ps-history-print-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  background: var(--canvas);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  transition:
+    background    var(--dur-fast) var(--ease),
+    border-color  var(--dur-fast) var(--ease),
+    color         var(--dur-fast) var(--ease),
+    transform     var(--dur-fast) var(--ease);
+}
+
+.ps-history-print-btn:active {
+  transform: scale(0.95);
+  background: var(--primary-bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.ps-history-print-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ps-history-summary {
+  padding: 10px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.ps-history-summary-label {
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.ps-history-summary-amount {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ============================================================
    SplitBillSheet (.sbs-*)
    ============================================================ */

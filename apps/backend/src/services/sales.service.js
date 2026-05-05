@@ -482,6 +482,28 @@ export async function paySaleWithTipService(saleId, userId) {
   });
 }
 
+export async function getPaidSalesTodayService(date = null) {
+  const d = date || new Date().toISOString().slice(0, 10);
+  const result = await db.query(
+    `SELECT
+       s.id,
+       s.monthly_number,
+       s.reference,
+       ROUND(CAST(s.total AS NUMERIC), 2)               AS total,
+       ROUND(CAST(COALESCE(s.tip_amount, 0) AS NUMERIC), 2) AS tip_amount,
+       s.paid_at,
+       s.created_at,
+       u.name AS user_name
+     FROM sales s
+     JOIN users u ON u.id = s.user_id
+     WHERE s.status = 'paid'
+       AND CAST(COALESCE(s.paid_at, s.created_at) AS DATE) = CAST(? AS DATE)
+     ORDER BY COALESCE(s.paid_at, s.created_at) DESC`,
+    [d]
+  );
+  return getRows(result);
+}
+
 export async function cancelSaleService(saleId, userId) {
   const result = await db.query(
     `UPDATE sales

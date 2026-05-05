@@ -1,5 +1,5 @@
 import {
-  useEffect, useRef, useState,
+  useCallback, useEffect, useRef, useState,
 } from "react";
 import {
   DndContext, DragOverlay, PointerSensor, TouchSensor,
@@ -16,6 +16,7 @@ import {
   useCatalog, useTicket, useOrders, useCheckout, usePrinting,
   fmt, toNum,
 } from "@pos/pos-core";
+import { apiRequest } from "@pos/api-client";
 import type { Product, CartItem, SavedOrder } from "@pos/types";
 import { usePullToRefresh } from "../../hooks/usePullToRefresh";
 import SplitBillSheet from "./SplitBillSheet";
@@ -101,6 +102,26 @@ function BackIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function HistoryIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+      <circle cx="7" cy="17" r="1" /><circle cx="17" cy="17" r="1" />
+      <path d="M9 11l1 4" /><line x1="12" y1="3" x2="12" y2="7" />
+    </svg>
+  );
+}
+
+function ReceiptIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 7 6 2 18 2 18 7" />
+      <path d="M6 18H4a2 2 0 0 1-2-2V7h20v9a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="13" width="12" height="9" />
     </svg>
   );
 }
@@ -324,7 +345,18 @@ interface Props {
   onLogout: () => void;
 }
 
-type Screen = "pos" | "orders" | "completed";
+type Screen = "pos" | "orders" | "completed" | "history";
+
+interface PaidSale {
+  id:             number;
+  monthly_number: number | null;
+  reference:      string | null;
+  total:          number | string;
+  tip_amount:     number | string;
+  paid_at:        string | null;
+  created_at:     string;
+  user_name:      string;
+}
 
 export default function PosScreen({ role, onGoToAdmin, onLogout }: Props) {
   /* ── Hooks de @pos/pos-core ───────────────────────────── */
@@ -371,6 +403,33 @@ export default function PosScreen({ role, onGoToAdmin, onLogout }: Props) {
 
   /* ── Split bill sheet (UI-only) ───────────────────────── */
   const [showSplitSheet, setShowSplitSheet] = useState(false);
+
+  /* ── History (ventas cobradas) ────────────────────────── */
+  const todayStr = () => {
+    const n = new Date();
+    return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+  };
+  const [historyDate,    setHistoryDate]    = useState(todayStr);
+  const [paidSales,      setPaidSales]      = useState<PaidSale[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  const fetchPaidSales = useCallback(async (date: string) => {
+    setHistoryLoading(true);
+    try {
+      const res = await apiRequest(`/sales/paid?date=${date}`) as
+        { success?: boolean; data?: PaidSale[] } | PaidSale[];
+      const data = Array.isArray(res) ? res : (res as { data?: PaidSale[] }).data ?? [];
+      if (mountedRef.current) setPaidSales(data);
+    } catch {
+      if (mountedRef.current) setPaidSales([]);
+    } finally {
+      if (mountedRef.current) setHistoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (screen === "history") void fetchPaidSales(historyDate);
+  }, [screen, historyDate, fetchPaidSales]);
 
   /* ── DnD sensors ──────────────────────────────────────── */
   const sensors = useSensors(
@@ -675,6 +734,92 @@ export default function PosScreen({ role, onGoToAdmin, onLogout }: Props) {
   }
 
   /* ============================================================
+     SCREEN: History (ventas cobradas)
+  ============================================================ */
+  if (screen === "history") {
+    const totalHoy   = paidSales.reduce((s, v) => s + toNum(v.total), 0);
+    const totalTips  = paidSales.reduce((s, v) => s + toNum(v.tip_amount), 0);
+
+    const fmtDateTime = (iso: string | null) => {
+      if (!iso) return "";
+      return new Date(iso).toLocaleString("es-GT", { dateStyle: "short", timeStyle: "short" });
+    };
+
+    return (
+      <div className="ps-history-overlay">
+        <div className="ps-history-header">
+          <button className="ps-icon-btn" onClick={() => setScreen("pos")} aria-label="Volver al POS">
+            <BackIcon />
+          </button>
+          <h1 className="ps-history-title">Ventas cobradas</h1>
+          <input
+            type="date"
+            className="ps-history-date"
+            value={historyDate}
+            onChange={e => setHistoryDate(e.target.value)}
+          />
+        </div>
+
+        {historyLoading ? (
+          <div className="ps-center"><Spinner size="lg" /></div>
+        ) : paidSales.length === 0 ? (
+          <div className="ps-center" style={{ flexDirection: "column", gap: 12 }}>
+            <span style={{ fontSize: 48, lineHeight: 1 }}>🧾</span>
+            <p style={{ fontWeight: 700, color: "var(--text-3)" }}>Sin ventas cobradas en esta fecha</p>
+          </div>
+        ) : (
+          <div className="ps-history-list">
+            {paidSales.map(sale => {
+              const tip = toNum(sale.tip_amount);
+              return (
+                <div key={sale.id} className="ps-history-card">
+                  <div className="ps-history-info">
+                    <div className="ps-history-ref">
+                      {sale.reference || `Venta #${sale.monthly_number ?? sale.id}`}
+                    </div>
+                    <div className="ps-history-meta">
+                      <span className="ps-history-seller">👤 {sale.user_name}</span>
+                      <span>· {fmtDateTime(sale.paid_at ?? sale.created_at)}</span>
+                    </div>
+                  </div>
+                  <div className="ps-history-amounts">
+                    <span className="ps-history-total">{fmt(toNum(sale.total))}</span>
+                    {tip > 0 && (
+                      <span className="ps-history-tip">+ {fmt(tip)} propina</span>
+                    )}
+                  </div>
+                  <button
+                    className="ps-history-print-btn"
+                    disabled={printing.printLoading}
+                    onClick={() => void printing.printReceipt(sale.id)}
+                    title="Reimprimir ticket"
+                  >
+                    <PrintIcon />
+                    <span>Imprimir</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {!historyLoading && paidSales.length > 0 && (
+          <div className="ps-history-summary">
+            <div>
+              <div className="ps-history-summary-label">Total del día</div>
+              <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 1 }}>
+                {paidSales.length} venta{paidSales.length !== 1 ? "s" : ""}
+                {totalTips > 0 && ` · Propinas: ${fmt(totalTips)}`}
+              </div>
+            </div>
+            <span className="ps-history-summary-amount">{fmt(totalHoy)}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ============================================================
      SCREEN: Main POS (pos)
   ============================================================ */
 
@@ -702,6 +847,15 @@ export default function PosScreen({ role, onGoToAdmin, onLogout }: Props) {
           >
             <ListIcon />
             <span>Órdenes</span>
+          </button>
+
+          <button
+            className="ps-sidebar-btn"
+            onClick={() => setScreen("history")}
+            aria-label="Ventas cobradas"
+          >
+            <ReceiptIcon />
+            <span>Cobradas</span>
           </button>
 
           <div className="ps-sidebar-spacer" />

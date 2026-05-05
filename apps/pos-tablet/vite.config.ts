@@ -1,6 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   base: "./",
@@ -34,9 +37,6 @@ export default defineConfig({
   },
 
   build: {
-    // jspdf + jspdf-autotable + xlsx suman ~1 MB minificado (generación
-    // de reportes PDF/Excel en el cliente). Elevamos el límite para
-    // evitar el warning de chunk durante el build de producción.
     chunkSizeWarningLimit: 1600,
   },
 });
