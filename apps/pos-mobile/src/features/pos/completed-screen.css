@@ -1,0 +1,98 @@
+.cs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: #0f0d0b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+}
+
+.cs-icon {
+  width: 88px;
+  height: 88px;
+  background: rgba(21, 128, 61, 0.12);
+  border: 2px solid #15803d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  animation: cs-pop 0.3s cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes cs-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.cs-check {
+  color: #15803d;
+}
+
+.cs-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f5f0e8;
+  letter-spacing: -0.5px;
+  animation: cs-fade-up 0.25s 0.1s ease both;
+}
+
+.cs-total {
+  font-size: 40px;
+  font-weight: 900;
+  color: #dc2626;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+  animation: cs-fade-up 0.25s 0.15s ease both;
+}
+
+@keyframes cs-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Print actions ───────────────────────── */
+.cs-print-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  animation: cs-fade-up 0.25s 0.2s ease both;
+}
+
+.cs-print-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+  white-space: nowrap;
+}
+
+.cs-print-btn:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f0e8;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.cs-print-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cs-btn {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 280px;
+  animation: cs-fade-up 0.25s 0.25s ease both;
+}

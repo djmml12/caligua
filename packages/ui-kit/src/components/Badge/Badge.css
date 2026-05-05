@@ -1,0 +1,56 @@
+/* ──────────────────────────────────────────
+   Badge — pill label / dot indicator
+   ────────────────────────────────────────── */
+
+.uk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Sizes ──────────────────────────────── */
+.uk-badge--sm { font-size: 11px; padding: 3px 8px; }
+.uk-badge--md { font-size: var(--text-xs); padding: 4px 10px; }
+
+/* ── Dot (no text) ──────────────────────── */
+.uk-badge--dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+}
+.uk-badge--dot.uk-badge--md {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Variants ───────────────────────────── */
+.uk-badge--success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.uk-badge--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.uk-badge--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+.uk-badge--info {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.uk-badge--neutral {
+  background: var(--canvas);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.uk-badge--dark {
+  background: var(--sidebar-bg);
+  color: #fff;
+}

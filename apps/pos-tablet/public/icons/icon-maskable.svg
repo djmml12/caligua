@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full bleed background for maskable (safe zone = inner 80%) -->
+  <rect width="512" height="512" fill="#1e1a17"/>
+  <!-- Cart body — shifted to safe zone center -->
+  <path d="M106 154h44l44 168h168l38-120H186" stroke="#c2410c" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="220" cy="362" r="22" fill="#c2410c"/>
+  <circle cx="328" cy="362" r="22" fill="#c2410c"/>
+  <!-- Plus -->
+  <line x1="366" y1="130" x2="366" y2="190" stroke="#f8f5f0" stroke-width="20" stroke-linecap="round"/>
+  <line x1="336" y1="160" x2="396" y2="160" stroke="#f8f5f0" stroke-width="20" stroke-linecap="round"/>
+</svg>

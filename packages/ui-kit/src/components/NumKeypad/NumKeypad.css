@@ -1,0 +1,112 @@
+/* ──────────────────────────────────────────
+   NumKeypad — large touch-friendly numpad
+   ────────────────────────────────────────── */
+
+.uk-numpad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* ── Label above display ────────────────── */
+.uk-numpad-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Display ────────────────────────────── */
+.uk-numpad-display {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-height: 72px;
+  padding: var(--space-3) var(--space-5);
+  background: var(--canvas);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+}
+
+.uk-numpad-prefix {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.uk-numpad-value {
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  word-break: break-all;
+  text-align: right;
+}
+
+/* ── Grid ───────────────────────────────── */
+.uk-numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+/* ── Keys ───────────────────────────────── */
+.uk-numpad-key {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform  var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.uk-numpad-key:active {
+  transform: scale(0.93);
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+/* Confirm — green */
+.uk-numpad-key--confirm {
+  background: var(--success);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+  font-size: var(--text-2xl);
+}
+.uk-numpad-key--confirm:active {
+  background: #15803d;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Action (C / backspace) — muted */
+.uk-numpad-key--action {
+  background: var(--canvas);
+  color: var(--text-2);
+  font-size: var(--text-lg);
+  box-shadow: none;
+}
+.uk-numpad-key--action:active {
+  background: var(--border);
+}

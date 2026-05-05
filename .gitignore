@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+*.pdf
+*.xlsx
+.DS_Store
+.aider*
+apps/pos-tablet/dist/
+apps/pos-mobile/dist/
+apps/backend/.env
+.claude/worktrees/

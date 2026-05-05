@@ -1,0 +1,91 @@
+/* ──────────────────────────────────────────
+   FAB — Floating Action Button
+   ────────────────────────────────────────── */
+
+.uk-fab {
+  position: fixed;
+  z-index: 200;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  height: 64px;
+  min-width: 64px;
+  padding: 0 var(--space-5) 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  border: none;
+
+  background: var(--sidebar-bg);
+  color: #fff;
+  box-shadow: var(--shadow-xl);
+
+  font-family: inherit;
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    transform  var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+/* Icon-only: square */
+.uk-fab:not(.uk-fab--labeled) {
+  padding: 0;
+  width: 64px;
+  justify-content: center;
+}
+
+.uk-fab:active {
+  transform: scale(0.93);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Positions ──────────────────────────── */
+.uk-fab--bottom-right {
+  right:  var(--fab-offset, 24px);
+  bottom: var(--fab-offset, 24px);
+}
+
+.uk-fab--bottom-left {
+  left:   var(--fab-offset, 24px);
+  bottom: var(--fab-offset, 24px);
+}
+
+.uk-fab--bottom-center {
+  left:      50%;
+  bottom:    var(--fab-offset, 24px);
+  transform: translateX(-50%);
+}
+
+.uk-fab--bottom-center:active {
+  transform: translateX(-50%) scale(0.93);
+}
+
+/* ── Icon ───────────────────────────────── */
+.uk-fab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.uk-fab-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ── Label ──────────────────────────────── */
+.uk-fab-label {
+  padding-right: var(--space-1);
+}

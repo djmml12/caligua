@@ -1,0 +1,138 @@
+/* ============================================================
+   MobileShell — layout raíz + bottom-nav
+   Paleta coincide con el sidebar del pos-tablet:
+     fondo oscuro  → #0f0d0b  (--sidebar-bg)
+     activo        → #dc2626  (--sidebar-active)
+   ============================================================ */
+
+/* ── Shell: flex columna ocupando pantalla completa ──────── */
+
+.ms-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--canvas);
+}
+
+/* ── Área de contenido: crece para llenar el espacio ─────── */
+
+.ms-content {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  /* deja espacio para la nav + safe-area inferior */
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Bottom nav ──────────────────────────────────────────── */
+
+.ms-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: stretch;
+
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+
+  background: #0f0d0b;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* sombra hacia arriba */
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Tab ─────────────────────────────────────────────────── */
+
+.ms-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  transition: color 120ms ease;
+}
+
+.ms-tab:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ms-tab--active {
+  color: #dc2626;
+}
+
+/* ── Icono con badge ─────────────────────────────────────── */
+
+.ms-tab-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.ms-badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ── Placeholder genérico para tabs sin contenido aún ────── */
+
+.ms-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  gap: 8px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.ms-placeholder-icon {
+  font-size: 48px;
+  margin: 0 0 8px;
+}
+
+.ms-placeholder-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.ms-placeholder-sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-3);
+  max-width: 260px;
+  line-height: 1.5;
+}

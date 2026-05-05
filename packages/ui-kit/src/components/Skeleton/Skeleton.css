@@ -1,0 +1,43 @@
+/* ──────────────────────────────────────────
+   Skeleton — shimmer loading placeholder
+   ────────────────────────────────────────── */
+
+@keyframes uk-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.uk-skel {
+  background: linear-gradient(
+    90deg,
+    #ede9e4 25%,
+    #f5f2ee 50%,
+    #ede9e4 75%
+  );
+  background-size: 1200px 100%;
+  animation: uk-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Variants ───────────────────────────── */
+.uk-skel--rect {
+  border-radius: var(--radius-md);
+  min-height: 20px;
+}
+
+.uk-skel--circle {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uk-skel--text {
+  height: 15px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Text group ─────────────────────────── */
+.uk-skel-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}

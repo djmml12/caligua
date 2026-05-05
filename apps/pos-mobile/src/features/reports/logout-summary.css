@@ -1,0 +1,296 @@
+/* ============================================================
+   LogoutSummaryScreen — end-of-day closing screen (mobile)
+   ============================================================ */
+
+.ls-shell {
+  position: relative;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: none;
+}
+
+/* Warm night background */
+.ls-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--canvas);
+  background-image:
+    radial-gradient(circle, rgba(28, 25, 23, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.ls-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(28, 25, 23, 0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 10% 0%,   rgba(194, 65, 12, 0.05)  0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── Card ───────────────────────────────────────────────────── */
+
+.ls-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - 32px);
+  background: var(--surface);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl);
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow: hidden;
+  animation: ls-card-in 380ms var(--ease) both;
+}
+
+@keyframes ls-card-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+
+.ls-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.ls-moon-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--sidebar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
+
+.ls-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--text-1);
+  letter-spacing: 0.04em;
+}
+
+.ls-date {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+/* ── Loading ────────────────────────────────────────────────── */
+
+.ls-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: var(--text-3);
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── KPI grid ───────────────────────────────────────────────── */
+
+.ls-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ls-kpi-card {
+  background: var(--canvas);
+  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--border);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ls-kpi-card--highlight {
+  background: var(--sidebar-bg);
+  border-color: var(--sidebar-bg);
+}
+
+.ls-kpi-card--highlight .ls-kpi-label { color: rgba(255, 255, 255, 0.55); }
+.ls-kpi-card--highlight .ls-kpi-value { color: #fff; }
+
+.ls-kpi-card--profit {
+  background: var(--success-bg);
+  border-color: rgba(22, 163, 74, 0.25);
+}
+
+.ls-kpi-card--profit .ls-kpi-label { color: rgba(22, 163, 74, 0.75); }
+.ls-kpi-card--profit .ls-kpi-value { color: var(--success); }
+
+.ls-kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--text-3);
+}
+
+.ls-kpi-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ── Tips note ─────────────────────────────────────────────── */
+
+.ls-tips-note {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning, #f59e0b) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning, #f59e0b) 25%, transparent);
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* ── Sales list ─────────────────────────────────────────────── */
+
+.ls-sales-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ls-sales-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.ls-sales-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ls-sales-list {
+  flex: 1;
+  min-height: 60px;
+  overflow-y: auto;
+}
+
+.ls-sale-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ls-sale-row:last-child { border-bottom: none; }
+
+.ls-sale-id {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 600;
+  min-width: 44px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-sale-total {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-sale-tip {
+  font-size: 11px;
+  color: var(--warning);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-empty {
+  padding: 20px 14px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Actions ────────────────────────────────────────────────── */
+
+.ls-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Low viewport ───────────────────────────────────────────── */
+
+@media (max-height: 620px) {
+  .ls-shell { align-items: flex-start; padding: 8px; }
+  .ls-card  { gap: var(--space-2); padding: 12px 14px 12px; max-height: calc(100dvh - 16px); }
+  .ls-moon-icon { width: 34px; height: 34px; }
+  .ls-moon-icon svg { width: 20px; height: 20px; }
+  .ls-title { font-size: 1.1rem; }
+  .ls-date  { display: none; }
+  .ls-kpi-card { padding: 8px 10px; }
+  .ls-kpi-value { font-size: 13px; }
+  .ls-kpi-label { font-size: 9px; }
+  .ls-sales-list { min-height: 48px; }
+  .ls-actions { gap: 6px; }
+}
+
+@media (max-height: 480px) {
+  .ls-kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .ls-kpi-card { padding: 6px 8px; }
+  .ls-kpi-value { font-size: 12px; }
+}

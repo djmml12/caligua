@@ -1,0 +1,30 @@
+.pp-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  gap: 10px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.pp-icon {
+  font-size: 52px;
+  margin-bottom: 8px;
+}
+
+.pp-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.pp-sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-3);
+  max-width: 260px;
+  line-height: 1.5;
+}

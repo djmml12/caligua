@@ -1,0 +1,97 @@
+/* ──────────────────────────────────────────
+   BottomSheet — slides up from bottom
+   ────────────────────────────────────────── */
+
+/* ── Backdrop ───────────────────────────── */
+.uk-bs-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  /* Push sheet up above the virtual keyboard */
+  padding-bottom: var(--keyboard-height, 0px);
+  transition: padding-bottom var(--dur-slow) var(--ease);
+  /* Animate backdrop in */
+  animation: uk-bs-backdrop-in var(--dur-slow) var(--ease) forwards;
+}
+
+@keyframes uk-bs-backdrop-in {
+  from {
+    background: rgba(28, 25, 23, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    background: rgba(28, 25, 23, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+}
+
+/* ── Sheet panel ────────────────────────── */
+.uk-bs {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100dvh - var(--keyboard-height, 0px) - var(--space-4, 16px));
+  /* Slide-up enter */
+  animation: uk-bs-slide-in var(--dur-slow) var(--ease) forwards;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+@keyframes uk-bs-slide-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* Heights — backdrop padding-bottom handles the keyboard offset */
+.uk-bs--auto { height: auto; }
+.uk-bs--half { height: 52dvh; }
+.uk-bs--tall { height: 72dvh; }
+.uk-bs--full { height: 92dvh; }
+
+/* ── Drag handle area ───────────────────── */
+.uk-bs-handle-area {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0 var(--space-2);
+  flex-shrink: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.uk-bs-handle-area:active { cursor: grabbing; }
+
+.uk-bs-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+/* ── Header ─────────────────────────────── */
+.uk-bs-header {
+  padding: 0 var(--space-5) var(--space-4);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.uk-bs-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+/* ── Body ───────────────────────────────── */
+.uk-bs-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5);
+  overscroll-behavior: contain;
+}

@@ -1,0 +1,19 @@
+{
+  "name": "pos-fenix",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=apps/backend\" \"npm run dev --workspace=apps/pos-tablet\" \"npm run dev --workspace=apps/pos-mobile\"",
+    "dev:tablet": "concurrently \"npm run dev --workspace=apps/backend\" \"npm run dev --workspace=apps/pos-tablet\"",
+    "dev:mobile": "concurrently \"npm run dev --workspace=apps/backend\" \"npm run dev --workspace=apps/pos-mobile\"",
+    "start:backend": "npm run start --workspace=apps/backend",
+    "build": "npm run build --workspace=apps/pos-tablet && npm run build --workspace=apps/pos-mobile"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

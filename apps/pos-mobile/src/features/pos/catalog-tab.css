@@ -1,0 +1,133 @@
+.ct-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0f0d0b;
+  overflow: hidden;
+}
+
+/* ── Search ──────────────────────────────── */
+.ct-search {
+  padding: 12px 14px 8px;
+  flex-shrink: 0;
+}
+
+.ct-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #f5f0e8;
+  font-size: 15px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.ct-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ct-search-input:focus {
+  border-color: #dc2626;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Category chips ──────────────────────── */
+.ct-cats {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 10px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.ct-cats::-webkit-scrollbar {
+  display: none;
+}
+
+.ct-chip {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.ct-chip--active {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+/* ── Product grid ────────────────────────── */
+.ct-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 12px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-content: start;
+}
+
+.ct-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+  min-height: 76px;
+  transition:
+    background var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    transform 80ms ease;
+}
+
+.ct-card:active {
+  transform: scale(0.96);
+}
+
+.ct-card--flash {
+  background: rgba(185, 28, 28, 0.2);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+.ct-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5f0e8;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.ct-card-price {
+  font-size: 14px;
+  color: #dc2626;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── States ──────────────────────────────── */
+.ct-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ct-empty-text {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 15px;
+}

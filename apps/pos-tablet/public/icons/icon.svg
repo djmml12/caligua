@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#1e1a17"/>
+  <!-- Cart body -->
+  <path d="M96 144h48l48 176h176l40-128H176" stroke="#c2410c" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Wheels -->
+  <circle cx="224" cy="368" r="24" fill="#c2410c"/>
+  <circle cx="336" cy="368" r="24" fill="#c2410c"/>
+  <!-- Plus symbol (add to cart) -->
+  <line x1="376" y1="136" x2="376" y2="200" stroke="#f8f5f0" stroke-width="22" stroke-linecap="round"/>
+  <line x1="344" y1="168" x2="408" y2="168" stroke="#f8f5f0" stroke-width="22" stroke-linecap="round"/>
+</svg>
