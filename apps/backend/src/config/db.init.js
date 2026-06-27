@@ -294,6 +294,12 @@ const applyMigrations = async () => {
       created_at    TIMESTAMP     DEFAULT NOW()
     )
   `);
+  // Asegura columnas que pudieron faltar si la tabla fue creada con código incompleto
+  await db.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS date  DATE`);
+  await db.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS time  TIME`);
+  await db.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS items JSONB NOT NULL DEFAULT '[]'`);
+  await db.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS total NUMERIC(12,4) DEFAULT 0`);
+  await db.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS notes TEXT`);
   await db.query(`
     CREATE INDEX IF NOT EXISTS idx_reservations_date
       ON reservations(date)
