@@ -34,9 +34,10 @@ command -v npm  >/dev/null 2>&1 || die "npm no está instalado."
 
 # ── 1. Limpiar artefactos de Windows que vinieron en el zip ──────────────
 step "Limpiando artefactos de Windows"
-# Si node_modules tiene binarios win32 mezclados, mejor borrar y reinstalar
-if [[ -d "$REPO_DIR/node_modules" ]] && find "$REPO_DIR/node_modules" -maxdepth 4 -name "*win32*" -print -quit 2>/dev/null | grep -q .; then
-  warn "Detectados binarios win32 en node_modules. Borrando para reinstalación limpia..."
+# Solo borrar si hay binarios NATIVOS de Windows reales (.exe o addons .node win32),
+# no archivos JS multiplataforma que casualmente contienen "win32" en el nombre.
+if [[ -d "$REPO_DIR/node_modules" ]] && find "$REPO_DIR/node_modules" -maxdepth 5 \( -name "*.exe" -o -name "*win32*.node" \) -print -quit 2>/dev/null | grep -q .; then
+  warn "Detectados binarios nativos de Windows en node_modules. Borrando para reinstalación limpia..."
   rm -rf "$REPO_DIR/node_modules"
   rm -rf "$REPO_DIR"/apps/*/node_modules
   rm -rf "$REPO_DIR"/packages/*/node_modules
