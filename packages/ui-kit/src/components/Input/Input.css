@@ -1,0 +1,108 @@
+/* ──────────────────────────────────────────
+   Input — floating label, touch-optimised
+   ────────────────────────────────────────── */
+
+.uk-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+/* ── Field container ────────────────────── */
+.uk-input-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow   var(--dur-fast) var(--ease);
+}
+
+.uk-input-field--md { height: var(--touch-md); }
+.uk-input-field--lg { height: var(--touch-lg); }
+
+.uk-input-field:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.13);
+}
+
+.uk-input-field--error {
+  border-color: var(--danger);
+}
+.uk-input-field--error:focus-within {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.13);
+}
+
+/* ── Actual <input> ─────────────────────── */
+.uk-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 22px var(--space-4) 8px;
+  font-size: var(--text-lg);
+  font-family: inherit;
+  color: var(--text-1);
+  width: 100%;
+  /* Touch: no double-tap zoom on iOS */
+  touch-action: manipulation;
+}
+
+.uk-input::placeholder { color: transparent; }
+
+/* ── Floating label ─────────────────────── */
+.uk-input-label {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-md);
+  color: var(--text-3);
+  pointer-events: none;
+  transform-origin: left center;
+  transition:
+    top          var(--dur-base) var(--ease),
+    font-size    var(--dur-base) var(--ease),
+    color        var(--dur-base) var(--ease),
+    font-weight  var(--dur-base) var(--ease);
+  white-space: nowrap;
+}
+
+/* Float on focus OR when field has a value */
+.uk-input-field:focus-within .uk-input-label,
+.uk-input-field--filled       .uk-input-label {
+  top: 13px;
+  transform: translateY(0);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.uk-input-field:focus-within .uk-input-label {
+  color: var(--primary);
+}
+
+/* ── Right element (e.g., clear btn) ────── */
+.uk-input-right {
+  padding-right: var(--space-2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Error text ─────────────────────────── */
+.uk-input-error {
+  font-size: var(--text-xs);
+  color: var(--danger);
+  font-weight: 600;
+  padding-left: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}

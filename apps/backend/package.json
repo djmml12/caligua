@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "node -e \"const {execSync}=require('child_process');const {readdirSync,statSync}=require('fs');const {join}=require('path');function walk(d){for(const f of readdirSync(d)){const p=join(d,f);if(statSync(p).isDirectory())walk(p);else if(p.endsWith('.js'))execSync(`node --check \\\"${p}\\\"`,{stdio:'inherit'});}}walk('src');console.log('✅ Backend syntax OK');\"",
+    "init-db": "node src/scripts/init-db.js",
+    "create-admin": "node src/scripts/createAdmin.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "jszip": "^3.10.1",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.20.0",
+    "pngjs": "^7.0.0",
+    "saxes": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}

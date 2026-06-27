@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!--
+      Mobile viewport:
+      - initial-scale=1: render at device CSS pixels
+      - maximum-scale=1 + user-scalable=no: previene zoom accidental en contexto POS
+      - viewport-fit=cover: respeta notch e islas dinámicas (iPhone)
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <!-- PWA / fullscreen -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Tema oscuro coincide con bottom-nav -->
+    <meta name="theme-color" content="#0f0d0b" />
+    <meta name="apple-mobile-web-app-title" content="Caligua · Móvil" />
+
+    <link rel="icon"             href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon.svg" />
+    <title>Caligua · Móvil</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

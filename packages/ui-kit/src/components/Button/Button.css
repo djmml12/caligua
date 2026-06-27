@@ -1,0 +1,152 @@
+/* ──────────────────────────────────────────
+   Button — touch-first, tablet POS
+   ────────────────────────────────────────── */
+
+.uk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+
+  /* Touch essentials */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+/* Press feedback — replaces useless :hover on touch */
+.uk-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.uk-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.uk-btn--full { width: 100%; }
+
+/* ── Sizes ──────────────────────────────── */
+.uk-btn--sm {
+  height: var(--touch-sm);
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+
+.uk-btn--md {
+  height: var(--touch-md);
+  padding: 0 var(--space-5);
+  font-size: var(--text-md);
+}
+
+.uk-btn--lg {
+  height: var(--touch-lg);
+  padding: 0 var(--space-6);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-lg);
+}
+
+.uk-btn--xl {
+  height: var(--touch-xl);
+  padding: 0 var(--space-8);
+  font-size: var(--text-xl);
+  border-radius: var(--radius-lg);
+  letter-spacing: 0.03em;
+}
+
+/* ── Variants ───────────────────────────── */
+.uk-btn--primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+.uk-btn--primary:active:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.uk-btn--secondary {
+  background: var(--surface);
+  color: var(--text-1);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.uk-btn--secondary:active:not(:disabled) {
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+.uk-btn--danger {
+  background: var(--danger);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+.uk-btn--danger:active:not(:disabled) {
+  background: #b91c1c;
+  box-shadow: var(--shadow-sm);
+}
+
+.uk-btn--success {
+  background: var(--success);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+.uk-btn--success:active:not(:disabled) {
+  background: #15803d;
+  box-shadow: var(--shadow-sm);
+}
+
+.uk-btn--ghost {
+  background: transparent;
+  color: var(--text-2);
+}
+.uk-btn--ghost:active:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+/* Icon-only: square, no padding */
+.uk-btn--icon {
+  background: transparent;
+  color: var(--text-2);
+  border-radius: var(--radius-md);
+  padding: 0;
+  width: var(--touch-sm);
+  height: var(--touch-sm);
+  flex-shrink: 0;
+}
+.uk-btn--icon.uk-btn--md { width: var(--touch-md); height: var(--touch-md); }
+.uk-btn--icon.uk-btn--lg { width: var(--touch-lg); height: var(--touch-lg); }
+.uk-btn--icon:active:not(:disabled) {
+  background: var(--surface-2);
+}
+
+/* ── Loading spinner ────────────────────── */
+.uk-btn-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: uk-btn-spin 0.7s linear infinite;
+}
+
+@keyframes uk-btn-spin {
+  to { transform: rotate(360deg); }
+}

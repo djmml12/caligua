@@ -1,0 +1,85 @@
+/* ============================================================
+   pos-tablet — Global resets & base styles
+   Design tokens are loaded from @pos/ui-kit/tokens.css
+   ============================================================ */
+
+@import "@pos/ui-kit/tokens.css";
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  /* Tablet: use dynamic viewport height (handles browser chrome on tablets) */
+  min-height: 100dvh;
+}
+
+html {
+  /* Prevent iOS rubber-band scroll on the root */
+  overscroll-behavior: none;
+  /* Safe-area padding for notched iPads */
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+           env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", sans-serif;
+  background: var(--canvas);
+  color: var(--text-1);
+  /* Inherited from tokens.css :root but repeated here for clarity */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent callout on long-press (iOS) */
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+/* ── Remove default button / input styles ───────────────── */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ── Remove tap highlight globally ─────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Scrollbars — hidden by default on tablet ──────────── */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* ── Utility: tabular numbers for prices / quantities ───── */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Utility: visually hidden (a11y) ────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

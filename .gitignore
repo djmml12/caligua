@@ -1,0 +1,29 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+*.pdf
+*.xlsx
+
+# Build output
+apps/pos-tablet/dist/
+apps/pos-mobile/dist/
+
+# Backend secrets
+apps/backend/.env
+
+# Claude Code worktrees (rutas locales de Windows)
+.claude/worktrees/
+
+# Windows / macOS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Scripts temporales con rutas absolutas (no pertenecen al repo)
+build_*.mjs
+build_*.js
+export_*.mjs
+export_*.js

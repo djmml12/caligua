@@ -1,0 +1,35 @@
+/* ──────────────────────────────────────────
+   Spinner — circular loading indicator
+   ────────────────────────────────────────── */
+
+.uk-spinner {
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgba(28, 25, 23, 0.10);
+  border-top-color: var(--uk-spinner-color, var(--primary));
+  animation: uk-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes uk-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Sizes ──────────────────────────────── */
+.uk-spinner--sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2.5px;
+}
+
+.uk-spinner--md {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.uk-spinner--lg {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}

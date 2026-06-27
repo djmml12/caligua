@@ -1,0 +1,101 @@
+/* ============================================================
+   @pos/ui-kit — Design Tokens
+   Caligua Charcoal & Crimson — BBQ & Grill
+   ============================================================ */
+
+:root {
+
+  /* ── Colour: Canvas & Surfaces ─────────────────────────── */
+  --canvas:         #faf6ef;   /* hueso/marfil cálido */
+  --surface:        #ffffff;
+  --surface-2:      #fcf2e3;   /* crema caliente — hover / activo */
+
+  /* ── Colour: Sidebar ───────────────────────────────────── */
+  --sidebar-bg:     #0f0d0b;   /* carbón profundo — fondo del logo */
+  --sidebar-item:   rgba(255,255,255,0.06);
+  --sidebar-active: #dc2626;   /* rojo brillante — letras CALI GUA */
+
+  /* ── Colour: Accents ───────────────────────────────────── */
+  --primary:        #b91c1c;   /* carmesí — rojo de marca Caligua */
+  --primary-dark:   #7f1d1d;
+  --primary-bg:     #fef2f2;
+
+  --success:        #15803d;
+  --success-bg:     #f0fdf4;
+
+  --danger:         #ef4444;   /* rojo signal — distinto del primary */
+  --danger-bg:      #fef2f2;
+
+  --warning:        #ea580c;   /* naranja brasa — chispas BBQ */
+  --warning-bg:     #fff7ed;
+
+  /* ── Colour: Text ──────────────────────────────────────── */
+  --text-1:         #1c1917;   /* stone-950 — texto principal */
+  --text-2:         #57534e;   /* stone-600 — secundario */
+  --text-3:         #a8a29e;   /* stone-400 — muted / placeholder */
+
+  /* ── Colour: Borders ───────────────────────────────────── */
+  --border:         #ece3d5;   /* hueso cálido */
+  --border-focus:   #b91c1c;
+
+  /* ── Shadow ────────────────────────────────────────────── */
+  --shadow-sm:  0 1px 3px  rgba(28, 25, 23, 0.07);
+  --shadow-md:  0 4px 12px rgba(28, 25, 23, 0.09);
+  --shadow-lg:  0 12px 32px rgba(28, 25, 23, 0.11);
+  --shadow-xl:  0 24px 48px rgba(28, 25, 23, 0.15);
+
+  /* ── Border Radius ─────────────────────────────────────── */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;
+  --radius-pill: 999px;
+
+  /* ── Spacing scale ─────────────────────────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+
+  /* ── Touch targets ─────────────────────────────────────── */
+  --touch-sm:  44px;   /* mínimo aceptable */
+  --touch-md:  56px;   /* cómodo */
+  --touch-lg:  64px;   /* primario */
+  --touch-xl:  72px;   /* CTA principal */
+
+  /* ── Font sizes ────────────────────────────────────────── */
+  --text-xs:  13px;
+  --text-sm:  15px;
+  --text-md:  16px;
+  --text-lg:  18px;
+  --text-xl:  20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-4xl: 36px;
+
+  /* ── Timing ────────────────────────────────────────────── */
+  --dur-fast:  120ms;
+  --dur-base:  180ms;
+  --dur-slow:  260ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ── Global touch resets ───────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Prevent iOS text-size adjust on orientation change */
+  -webkit-text-size-adjust: 100%;
+}

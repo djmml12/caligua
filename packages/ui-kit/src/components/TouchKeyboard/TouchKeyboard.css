@@ -1,0 +1,143 @@
+/* ──────────────────────────────────────────
+   TouchKeyboard — iOS-style, anchored bottom
+   ────────────────────────────────────────── */
+
+.uk-kb {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  background: #ece7e1;   /* warm linen — slightly darker than canvas */
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: 0 -8px 32px rgba(28, 25, 23, 0.13);
+
+  /* Hidden by default — slide up when .uk-kb--open */
+  transform: translateY(100%);
+  transition: transform var(--dur-slow) var(--ease);
+
+  /* Safe area on notched devices */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.uk-kb--open {
+  transform: translateY(0);
+}
+
+/* ── Top bar (handle + close) ───────────── */
+.uk-kb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: var(--space-2) var(--space-4) 0;
+  min-height: 36px;
+}
+
+.uk-kb-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: rgba(28, 25, 23, 0.2);
+}
+
+.uk-kb-close-btn {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--danger);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  line-height: 1;
+}
+
+.uk-kb-close-btn:active {
+  background: rgba(220, 38, 38, 0.22);
+}
+
+/* ── Key rows ───────────────────────────── */
+.uk-kb-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: var(--space-2) var(--space-3) var(--space-4);
+}
+
+.uk-kb-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── Individual key ─────────────────────── */
+.uk-kb-key {
+  flex: 1;
+  max-width: 60px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: inherit;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-1);
+  text-transform: lowercase;
+
+  background: #faf7f3;
+  border: 1px solid rgba(28, 25, 23, 0.10);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    transform  var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.uk-kb-key:active {
+  transform: scale(0.88);
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+/* Action keys (⌫, ⏎) — muted style */
+.uk-kb-key--action {
+  max-width: 84px;
+  font-size: var(--text-md);
+  background: #ddd7cf;
+  color: var(--text-2);
+  box-shadow: none;
+}
+.uk-kb-key--action:active {
+  background: #cec9c2;
+}
+
+/* Space bar */
+.uk-kb-row--actions .uk-kb-key--space {
+  flex: 3;
+  max-width: none;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: #ddd7cf;
+  box-shadow: none;
+}

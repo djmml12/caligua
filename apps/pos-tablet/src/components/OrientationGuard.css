@@ -1,0 +1,65 @@
+/* ============================================================
+   OrientationGuard — portrait-mode overlay
+   ============================================================ */
+
+.og-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--sidebar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  animation: og-in 240ms var(--ease) both;
+}
+
+@keyframes og-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.og-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  max-width: 280px;
+}
+
+/* Rotating phone icon */
+.og-phone {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--primary);
+  animation: og-rotate 1.8s var(--ease) infinite alternate;
+}
+
+@keyframes og-rotate {
+  0%   { transform: rotate(0deg);   }
+  40%  { transform: rotate(0deg);   }
+  70%  { transform: rotate(-90deg); }
+  100% { transform: rotate(-90deg); }
+}
+
+.og-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.og-desc {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}

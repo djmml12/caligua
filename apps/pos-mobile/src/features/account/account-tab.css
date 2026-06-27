@@ -1,0 +1,81 @@
+.at-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: 32px 20px 40px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Card de usuario ──────────────────────────────────────── */
+
+.at-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 2px 12px rgba(28, 25, 23, 0.08);
+}
+
+.at-avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.at-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.at-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.at-email {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.at-role-badge {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+/* ── Acciones ─────────────────────────────────────────────── */
+
+.at-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

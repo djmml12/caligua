@@ -1,0 +1,75 @@
+/* ============================================================
+   pos-mobile — Global resets & base styles
+   Tokens desde @pos/ui-kit: misma paleta que pos-tablet
+   ============================================================ */
+
+@import "@pos/ui-kit/tokens.css";
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  min-height: 100dvh;
+}
+
+html {
+  overscroll-behavior: none;
+  /* Safe-area para notch/home indicator en iPhone */
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", sans-serif;
+  background: var(--canvas);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
