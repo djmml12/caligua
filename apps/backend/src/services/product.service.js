@@ -38,6 +38,7 @@ const selectProductById = async (id) => {
        p.category_id,
        p.is_active,
        p.display_order,
+       COALESCE(p.tipo_stock, 'directo') AS tipo_stock,
        c.name      AS category_name,
        parent.name AS parent_category_name
      FROM products p
@@ -68,7 +69,17 @@ export const getProductsService = async (filtersOrCategoryId = {}, includeInacti
       p.name,
       p.price,
       p.cost_price,
-      p.stock,
+      CASE
+        WHEN COALESCE(p.tipo_stock, 'directo') = 'receta' THEN
+          COALESCE((
+            SELECT CAST(FLOOR(MIN(i.stock_actual / r.cantidad_por_porcion)) AS INTEGER)
+            FROM recetas r
+            JOIN insumos i ON i.id = r.insumo_id AND i.activo = 1
+            WHERE r.producto_id = p.id AND r.cantidad_por_porcion > 0
+          ), 0)
+        ELSE p.stock
+      END AS stock,
+      COALESCE(p.tipo_stock, 'directo') AS tipo_stock,
       p.category_id,
       p.is_active,
       p.display_order,
@@ -111,15 +122,18 @@ export const createProductService = async (data) => {
   const category_id   = toNullableInt(data?.category_id);
   const is_active     = toBoolInt(data?.is_active, 1);
   const display_order = toNumber(data?.display_order, 0);
+  const tipo_stock    = ["receta", "directo"].includes(String(data?.tipo_stock ?? ""))
+    ? String(data.tipo_stock)
+    : "directo";
 
   if (!name) throw new Error("Nombre requerido");
   if (!Number.isFinite(price) || price <= 0) throw new Error("Precio inválido");
 
   const result = await db.query(
-    `INSERT INTO products (name, price, cost_price, stock, category_id, is_active, display_order)
-     VALUES (?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO products (name, price, cost_price, stock, category_id, is_active, display_order, tipo_stock)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
      RETURNING id`,
-    [name, price, cost_price, stock, category_id, is_active, display_order]
+    [name, price, cost_price, stock, category_id, is_active, display_order, tipo_stock]
   );
   const newId = result.lastID;
 
@@ -140,6 +154,9 @@ export const updateProductService = async (id, data) => {
   const category_id   = data?.category_id !== undefined ? toNullableInt(data.category_id) : existing.category_id;
   const is_active     = data?.is_active !== undefined ? toBoolInt(data.is_active, existing.is_active ? 1 : 0) : existing.is_active ? 1 : 0;
   const display_order = data?.display_order !== undefined && data?.display_order !== null && data?.display_order !== "" ? toNumber(data.display_order, existing.display_order ?? 0) : toNumber(existing.display_order ?? 0, 0);
+  const tipo_stock    = data?.tipo_stock !== undefined
+    ? (["receta", "directo"].includes(String(data.tipo_stock)) ? String(data.tipo_stock) : existing.tipo_stock ?? "directo")
+    : existing.tipo_stock ?? "directo";
 
   await db.query(
     `UPDATE products
@@ -149,9 +166,10 @@ export const updateProductService = async (id, data) => {
             stock         = ?,
             category_id   = ?,
             is_active     = ?,
-            display_order = ?
+            display_order = ?,
+            tipo_stock    = ?
       WHERE id = ?`,
-    [name, price, cost_price, stock, category_id, is_active, display_order, id]
+    [name, price, cost_price, stock, category_id, is_active, display_order, tipo_stock, id]
   );
 
   const updated = await selectProductById(id);

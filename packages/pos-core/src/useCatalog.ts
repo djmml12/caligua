@@ -1,8 +1,9 @@
 import {
+  startTransition,
   useCallback, useDeferredValue, useEffect, useMemo, useRef, useState,
   type Dispatch, type SetStateAction,
 } from "react";
-import { apiRequest } from "@pos/api-client";
+import { apiRequest, STOCK_EVENTS_URL } from "@pos/api-client";
 import { useToast }   from "@pos/ui-kit";
 import type { Product, Category } from "@pos/types";
 
@@ -69,6 +70,60 @@ export function useCatalog(): UseCatalogResult {
     void loadCategories();
     return () => { mountedRef.current = false; };
   }, [loadProducts, loadCategories]);
+
+  /* SSE: recibe actualizaciones de stock en tiempo real desde el backend */
+  useEffect(() => {
+    let source: EventSource | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let retryDelay = 3_000;
+    let active = true;
+
+    const applyItems = (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data as string) as {
+          items: { id: number; stock: number | null }[];
+        };
+        if (!Array.isArray(data.items)) return;
+        const map = new Map<number, number | null>(data.items.map(i => [i.id, i.stock]));
+        /* startTransition: actualización de baja prioridad — React cede ante
+           gestos táctiles en curso antes de procesar el re-render. */
+        startTransition(() => {
+          setProducts(prev =>
+            prev.map(p => {
+              if (!map.has(p.id)) return p;
+              const next = map.get(p.id) as number | null;
+              /* Misma referencia si el stock no cambió → el memo de ProductCard
+                 evita re-renderizar tarjetas que no se movieron. */
+              return p.stock === next ? p : { ...p, stock: next };
+            })
+          );
+        });
+      } catch { /* datos mal formados, ignorar */ }
+    };
+
+    const connect = () => {
+      source = new EventSource(STOCK_EVENTS_URL);
+      source.addEventListener("stock:snapshot", applyItems);
+      source.addEventListener("stock:update",   applyItems);
+      source.addEventListener("open", () => { retryDelay = 3_000; });
+      source.addEventListener("error", () => {
+        source?.close();
+        source = null;
+        if (!active) return;
+        retryTimer = setTimeout(() => {
+          retryDelay = Math.min(retryDelay * 2, 30_000);
+          connect();
+        }, retryDelay);
+      });
+    };
+
+    connect();
+    return () => {
+      active = false;
+      if (retryTimer) clearTimeout(retryTimer);
+      source?.close();
+    };
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let list = products;

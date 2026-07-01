@@ -20,6 +20,7 @@ interface Product {
   price: number;
   cost_price: number;
   stock: number;
+  tipo_stock: "directo" | "receta";
   is_active: boolean;
 }
 
@@ -46,6 +47,7 @@ const normalizeProduct = (x: unknown): Product => {
     price:      safeNum(i.price),
     cost_price: safeNum(i.cost_price),
     stock:      safeNum(i.stock),
+    tipo_stock: i.tipo_stock === "receta" ? "receta" : "directo",
     is_active:  Boolean(i.is_active),
   };
 };
@@ -156,6 +158,13 @@ export default function InventoryManager({ role = "admin" }: Props) {
   const [showCatForm,  setShowCatForm]  = useState(false);
   const [newCatName,   setNewCatName]   = useState("");
   const [savingCat,    setSavingCat]    = useState(false);
+
+  /* Category edit BottomSheet */
+  const [showCatEdit,      setShowCatEdit]      = useState(false);
+  const [editCatId,        setEditCatId]        = useState<number | null>(null);
+  const [editCatNameDraft, setEditCatNameDraft] = useState("");
+  const [savingCatRename,  setSavingCatRename]  = useState(false);
+  const [deletingCat,      setDeletingCat]      = useState(false);
 
   /* Stock thresholds BottomSheet */
   const [showThresholds,  setShowThresholds]  = useState(false);
@@ -385,6 +394,60 @@ export default function InventoryManager({ role = "admin" }: Props) {
     }
   };
 
+  /* ── Edit / delete category ───────────────────────────── */
+
+  const openEditCat = (cat: Category) => {
+    setEditCatId(cat.id);
+    setEditCatNameDraft(cat.name);
+    setShowCatEdit(true);
+  };
+
+  const handleRenameCategory = async () => {
+    if (!editCatNameDraft.trim() || !editCatId) return;
+    setSavingCatRename(true);
+    try {
+      await apiRequest(`/categories/${editCatId}`, {
+        method: "PUT",
+        body: JSON.stringify({ name: editCatNameDraft.trim() }),
+      });
+      if (mountedRef.current) {
+        setCategories(prev => prev.map(c => c.id === editCatId ? { ...c, name: editCatNameDraft.trim() } : c));
+        setShowCatEdit(false);
+        show("Categoría renombrada", { type: "success" });
+      }
+    } catch (err: unknown) {
+      show(err instanceof Error ? err.message : "Error al renombrar", { type: "error" });
+    } finally {
+      if (mountedRef.current) setSavingCatRename(false);
+    }
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!editCatId) return;
+    setDeletingCat(true);
+    try {
+      await apiRequest(`/categories/${editCatId}`, { method: "DELETE" });
+      if (mountedRef.current) {
+        const remaining = categories.filter(c => c.id !== editCatId);
+        setCategories(remaining);
+        setShowCatEdit(false);
+        if (selectedCat === editCatId) {
+          if (remaining.length > 0) {
+            selectCategory(remaining[0].id);
+          } else {
+            setSelectedCat(null);
+            setProducts([]);
+          }
+        }
+        show("Categoría eliminada", { type: "success" });
+      }
+    } catch (err: unknown) {
+      show(err instanceof Error ? err.message : "Error al eliminar", { type: "error" });
+    } finally {
+      if (mountedRef.current) setDeletingCat(false);
+    }
+  };
+
   /* ── Threshold sheet handlers ─────────────────────────── */
 
   const openThresholds = () => {
@@ -513,16 +576,30 @@ export default function InventoryManager({ role = "admin" }: Props) {
           ) : orderedCats.length === 0 ? (
             <span style={{ fontSize: 13, color: "var(--text-3)" }}>Sin categorías</span>
           ) : (
-            orderedCats.map(cat => (
-              <button
-                key={cat.id}
-                className={`inv-cat-chip${selectedCat === cat.id ? " inv-cat-chip--active" : ""}${!cat.is_active ? " inv-product-inactive" : ""}`}
-                onClick={() => selectCategory(cat.id)}
-                style={cat.parent_id !== null ? { paddingLeft: 20, fontSize: 12 } : undefined}
-              >
-                {cat.parent_id !== null ? "↳ " : ""}{cat.name}
-              </button>
-            ))
+            orderedCats.map(cat => {
+              const isSelected = selectedCat === cat.id;
+              return (
+                <div key={cat.id} className="inv-cat-chip-wrap">
+                  <button
+                    className={`inv-cat-chip${isSelected ? " inv-cat-chip--active" : ""}${!cat.is_active ? " inv-product-inactive" : ""}`}
+                    onClick={() => selectCategory(cat.id)}
+                    style={cat.parent_id !== null ? { paddingLeft: 20, fontSize: 12 } : undefined}
+                  >
+                    {cat.parent_id !== null ? "↳ " : ""}{cat.name}
+                  </button>
+                  {canEdit && isSelected && (
+                    <button
+                      className="inv-cat-edit-btn"
+                      onPointerDown={e => e.stopPropagation()}
+                      onClick={() => openEditCat(cat)}
+                      aria-label={`Editar categoría ${cat.name}`}
+                    >
+                      <EditIcon />
+                    </button>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
 
@@ -670,17 +747,32 @@ export default function InventoryManager({ role = "admin" }: Props) {
         title={stockTarget ? `Stock — ${stockTarget.name}` : "Ajustar stock"}
       >
         <div style={{ padding: "0 16px 24px" }}>
-          <NumKeypad
-            value={stockValue}
-            onChange={setStockValue}
-            showConfirm
-            onConfirm={() => void handleStockConfirm()}
-            displayLabel={
-              stockTarget && stockTarget.stock < 0
-                ? `Ingresar unidades (déficit actual: ${stockTarget.stock})`
-                : "Nueva cantidad en stock"
-            }
-          />
+          {stockTarget?.tipo_stock === "receta" ? (
+            <div style={{ padding: "8px 4px 4px", display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 15 }}>
+                Este producto controla su stock por receta.
+              </p>
+              <p style={{ margin: 0, fontSize: 13, color: "var(--text-3)", lineHeight: 1.5 }}>
+                Su stock ({stockTarget.stock}) se calcula a partir de los insumos que consume.
+                Para corregirlo, ajusta el stock de esos insumos desde <strong>Bodega</strong>.
+              </p>
+              <Button variant="secondary" size="lg" fullWidth onClick={() => setShowStock(false)}>
+                Entendido
+              </Button>
+            </div>
+          ) : (
+            <NumKeypad
+              value={stockValue}
+              onChange={setStockValue}
+              showConfirm
+              onConfirm={() => void handleStockConfirm()}
+              displayLabel={
+                stockTarget && stockTarget.stock < 0
+                  ? `Ingresar unidades (déficit actual: ${stockTarget.stock})`
+                  : "Nueva cantidad en stock"
+              }
+            />
+          )}
         </div>
       </BottomSheet>
 
@@ -709,6 +801,48 @@ export default function InventoryManager({ role = "admin" }: Props) {
           >
             Crear categoría
           </Button>
+        </div>
+      </BottomSheet>
+
+      {/* ── Edit category BottomSheet ────────────── */}
+      <BottomSheet
+        open={showCatEdit}
+        onClose={() => !(savingCatRename || deletingCat) && setShowCatEdit(false)}
+        height="auto"
+        title="Editar categoría"
+        draggable={!(savingCatRename || deletingCat)}
+      >
+        <div className="al-form">
+          <Input
+            label="Nombre de la categoría"
+            value={editCatNameDraft}
+            onChange={e => setEditCatNameDraft(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") void handleRenameCategory(); }}
+            autoComplete="off"
+          />
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            loading={savingCatRename}
+            disabled={deletingCat || !editCatNameDraft.trim()}
+            onClick={() => void handleRenameCategory()}
+          >
+            Renombrar
+          </Button>
+          <Button
+            variant="danger"
+            size="lg"
+            fullWidth
+            loading={deletingCat}
+            disabled={savingCatRename}
+            onClick={() => void handleDeleteCategory()}
+          >
+            Eliminar categoría
+          </Button>
+          <p style={{ margin: 0, fontSize: 12, color: "var(--text-3)", textAlign: "center" }}>
+            Solo se puede eliminar si no tiene productos ni subcategorías.
+          </p>
         </div>
       </BottomSheet>
 

@@ -351,6 +351,66 @@ const applyMigrations = async () => {
     CREATE INDEX IF NOT EXISTS idx_email_log_created
       ON email_log(created_at DESC)
   `);
+
+  // ── Bodega ─────────────────────────────────────────────────────────────────
+
+  await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS tipo_stock TEXT DEFAULT 'directo'`);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS insumos (
+      id             SERIAL PRIMARY KEY,
+      nombre         TEXT           NOT NULL,
+      unidad_base    TEXT           DEFAULT 'pieza',
+      stock_actual   NUMERIC(14,4)  DEFAULT 0,
+      stock_min      NUMERIC(14,4)  DEFAULT 0,
+      stock_critico  NUMERIC(14,4)  DEFAULT 0,
+      costo_unitario NUMERIC(14,4)  DEFAULT 0,
+      activo         SMALLINT       DEFAULT 1,
+      created_at     TIMESTAMP      DEFAULT NOW()
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS compras_insumo (
+      id               SERIAL PRIMARY KEY,
+      insumo_id        INTEGER        NOT NULL REFERENCES insumos(id) ON DELETE CASCADE,
+      cantidad_compra  NUMERIC(14,4)  NOT NULL,
+      unidad_compra    TEXT           DEFAULT 'libra',
+      factor_a_base    NUMERIC(14,4)  DEFAULT 1,
+      cantidad_base    NUMERIC(14,4)  NOT NULL,
+      costo_total      NUMERIC(14,4)  DEFAULT 0,
+      costo_unitario   NUMERIC(14,4)  DEFAULT 0,
+      notas            TEXT,
+      created_at       TIMESTAMP      DEFAULT NOW()
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS recetas (
+      id                   SERIAL PRIMARY KEY,
+      producto_id          INTEGER        NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      insumo_id            INTEGER        NOT NULL REFERENCES insumos(id)  ON DELETE RESTRICT,
+      cantidad_por_porcion NUMERIC(14,4)  NOT NULL,
+      UNIQUE(producto_id, insumo_id)
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS movimientos_insumo (
+      id          SERIAL PRIMARY KEY,
+      insumo_id   INTEGER        NOT NULL REFERENCES insumos(id) ON DELETE CASCADE,
+      tipo        TEXT           NOT NULL,
+      cantidad    NUMERIC(14,4)  NOT NULL,
+      referencia  TEXT,
+      notas       TEXT,
+      created_at  TIMESTAMP      DEFAULT NOW()
+    )
+  `);
+
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_recetas_producto ON recetas(producto_id)`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_recetas_insumo ON recetas(insumo_id)`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_movimientos_insumo_id ON movimientos_insumo(insumo_id, created_at)`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_compras_insumo_id ON compras_insumo(insumo_id)`);
 };
 
 // ── Main ──────────────────────────────────────────────────────────────────────

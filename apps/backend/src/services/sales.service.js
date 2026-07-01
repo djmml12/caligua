@@ -1,5 +1,7 @@
 import db, { withTransaction } from "../config/db.js";
 import { processInventoryAlertsService } from "./email-alert.service.js";
+import { deductRecipeService } from "./bodega.service.js";
+import { notifyStockChanged } from "../utils/stock-events.js";
 
 // ── Result normalizers ────────────────────────────────────────────────────────
 
@@ -10,6 +12,23 @@ const getRows = (result) => {
 };
 
 const getFirstRow = (result) => getRows(result)[0] || null;
+
+/** Expande ids de productos vendidos a otros productos que comparten insumo,
+ *  para que el SSE de stock notifique también su stock recalculado. */
+async function resolveAffectedProductIds(soldProductIds, queryFn) {
+  const ids = [...new Set(soldProductIds.map(Number).filter(Number.isFinite))];
+  if (ids.length === 0) return [];
+  const placeholders = ids.map(() => "?").join(",");
+  const result = await queryFn(
+    `SELECT DISTINCT r2.producto_id AS id
+       FROM recetas r1
+       JOIN recetas r2 ON r2.insumo_id = r1.insumo_id
+      WHERE r1.producto_id IN (${placeholders})`,
+    ids
+  );
+  const cascade = getRows(result).map((r) => Number(r.id));
+  return [...new Set([...ids, ...cascade])];
+}
 
 // ── SQL fragments ─────────────────────────────────────────────────────────────
 
@@ -182,7 +201,7 @@ export async function createAndPaySaleService(userId, {
       if (!Number.isFinite(qty) || qty <= 0) throw new Error("Cantidad inválida");
 
       const productResult = await queryFn(
-        `SELECT id, price, cost_price FROM products WHERE id = ? AND is_active = 1`,
+        `SELECT id, price, cost_price, COALESCE(tipo_stock, 'directo') AS tipo_stock FROM products WHERE id = ? AND is_active = 1`,
         [item.product_id]
       );
       const product = getRows(productResult)[0];
@@ -199,7 +218,11 @@ export async function createAndPaySaleService(userId, {
         [saleId, item.product_id, qty, price, cost, subtotal]
       );
 
-      await queryFn(`UPDATE products SET stock = stock - ? WHERE id = ?`, [qty, item.product_id]);
+      if (String(product.tipo_stock ?? "directo") === "receta") {
+        await deductRecipeService(item.product_id, qty, queryFn, saleId);
+      } else {
+        await queryFn(`UPDATE products SET stock = stock - ? WHERE id = ?`, [qty, item.product_id]);
+      }
     }
 
     // When neither tip_amount nor tip_percentage is explicitly provided,
@@ -230,6 +253,14 @@ export async function createAndPaySaleService(userId, {
     );
 
     return { id: saleId, total, tip_amount: finalTipAmount };
+  }).then(async (result) => {
+    await processInventoryAlertsService();
+    const affected = await resolveAffectedProductIds(
+      items.map((i) => i.product_id),
+      (sql, params) => db.query(sql, params)
+    );
+    notifyStockChanged({ productIds: affected });
+    return result;
   });
 }
 
@@ -414,7 +445,10 @@ async function processSaleItems(saleId, queryFn) {
   let total = 0;
 
   for (const item of items) {
-    const stockQuery = await queryFn(`SELECT stock FROM products WHERE id = ?`, [item.product_id]);
+    const stockQuery = await queryFn(
+      `SELECT stock, COALESCE(tipo_stock, 'directo') AS tipo_stock FROM products WHERE id = ?`,
+      [item.product_id]
+    );
     const stockRows  = getRows(stockQuery);
 
     if (stockRows.length === 0) throw new Error("Producto no encontrado");
@@ -422,14 +456,20 @@ async function processSaleItems(saleId, queryFn) {
     const subtotal = Number(item.price_at_sale) * Number(item.quantity);
     total += subtotal;
 
-    await queryFn(`UPDATE products SET stock = stock - ? WHERE id = ?`, [item.quantity, item.product_id]);
+    if (stockRows[0].tipo_stock === "receta") {
+      await deductRecipeService(item.product_id, item.quantity, queryFn, saleId);
+    } else {
+      await queryFn(`UPDATE products SET stock = stock - ? WHERE id = ?`, [item.quantity, item.product_id]);
+    }
   }
 
-  return total;
+  return { total, productIds: items.map((i) => i.product_id) };
 }
 
 export async function paySaleService(saleId, userId) {
-  return withTransaction(async (client) => {
+  let soldProductIds = null;
+
+  const result = await withTransaction(async (client) => {
     const queryFn = (sql, params) =>
       client ? db.queryClient(client, sql, params) : db.query(sql, params);
 
@@ -441,7 +481,9 @@ export async function paySaleService(saleId, userId) {
     let total = Number(saleRows[0].total || 0);
 
     if (saleRows[0].status === "open") {
-      total = await processSaleItems(saleId, queryFn);
+      const processed = await processSaleItems(saleId, queryFn);
+      total = processed.total;
+      soldProductIds = processed.productIds;
     }
 
     await queryFn(
@@ -458,13 +500,22 @@ export async function paySaleService(saleId, userId) {
 
     await processInventoryAlertsService();
 
-    const updatedSale = await getSaleByIdService(saleId);
-    return { ...updatedSale, total_with_tip: total };
+    return { total };
   });
+
+  if (soldProductIds) {
+    const affected = await resolveAffectedProductIds(soldProductIds, (sql, params) => db.query(sql, params));
+    notifyStockChanged({ productIds: affected });
+  }
+
+  const updatedSale = await getSaleByIdService(saleId);
+  return { ...updatedSale, total_with_tip: result.total };
 }
 
 export async function paySaleWithTipService(saleId, userId) {
-  return withTransaction(async (client) => {
+  let soldProductIds = null;
+
+  const result = await withTransaction(async (client) => {
     const queryFn = (sql, params) =>
       client ? db.queryClient(client, sql, params) : db.query(sql, params);
 
@@ -476,7 +527,9 @@ export async function paySaleWithTipService(saleId, userId) {
     let total = Number(saleRows[0].total || 0);
 
     if (saleRows[0].status === "open") {
-      total = await processSaleItems(saleId, queryFn);
+      const processed = await processSaleItems(saleId, queryFn);
+      total = processed.total;
+      soldProductIds = processed.productIds;
     }
 
     const tipResult = await queryFn(`SELECT value FROM settings WHERE key = 'tip_percentage'`, []);
@@ -498,9 +551,16 @@ export async function paySaleWithTipService(saleId, userId) {
 
     await processInventoryAlertsService();
 
-    const updatedSale = await getSaleByIdService(saleId);
-    return { ...updatedSale, total_with_tip: total + tipAmount };
+    return { total, tipAmount };
   });
+
+  if (soldProductIds) {
+    const affected = await resolveAffectedProductIds(soldProductIds, (sql, params) => db.query(sql, params));
+    notifyStockChanged({ productIds: affected });
+  }
+
+  const updatedSale = await getSaleByIdService(saleId);
+  return { ...updatedSale, total_with_tip: result.total + result.tipAmount };
 }
 
 export async function getPaidSalesTodayService(date = null) {

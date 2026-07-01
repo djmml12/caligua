@@ -3,6 +3,7 @@ import { Button, TouchKeyboard } from "@pos/ui-kit";
 import { KeyboardContext } from "../context/KeyboardContext";
 import { apiRequest } from "../services/api";
 import InventoryManager    from "../features/admin/InventoryManager";
+import BodegaManager       from "../features/admin/BodegaManager";
 import Dashboard           from "../features/admin/Dashboard";
 import StaffManager        from "../features/admin/StaffManager";
 import TipsManager         from "../features/admin/TipsManager";
@@ -14,7 +15,7 @@ import "./admin.css";
 
 /* ── Types ────────────────────────────────────────────────── */
 
-type AdminView = "inventory" | "dashboard" | "staff" | "tips" | "printer" | "email" | "keyboard" | "reservations";
+type AdminView = "inventory" | "bodega" | "dashboard" | "staff" | "tips" | "printer" | "email" | "keyboard" | "reservations";
 
 interface Props {
   role:        string;
@@ -28,6 +29,15 @@ function InventoryIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    </svg>
+  );
+}
+
+function BodegaIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-6 9 6v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <path d="M9 22V12h6v10" />
     </svg>
   );
 }
@@ -147,8 +157,8 @@ export default function AdminLayout({ role, onBackToPos, onLogout }: Props) {
     return () => { mountedRef.current = false; };
   }, []);
 
-  /* Guard: supervisor can only see inventory */
-  const safeView = isSupervisor && view !== "inventory" ? "inventory" : view;
+  /* Guard: supervisor can only see inventory/bodega */
+  const safeView = isSupervisor && view !== "inventory" && view !== "bodega" ? "inventory" : view;
 
   const navItem = (
     v: AdminView,
@@ -186,6 +196,7 @@ export default function AdminLayout({ role, onBackToPos, onLogout }: Props) {
 
         <nav className="al-nav" aria-label="Admin navigation">
           {navItem("inventory",    "Inventario",      <InventoryIcon />)}
+          {navItem("bodega",       "Bodega",          <BodegaIcon />)}
           {navItem("dashboard",    "Reportes",        <DashboardIcon />,    true)}
           {navItem("reservations", "Reservas",        <ReservationIcon />,  true)}
           {navItem("staff",        "Personal",        <StaffIcon />,        true)}
@@ -226,6 +237,7 @@ export default function AdminLayout({ role, onBackToPos, onLogout }: Props) {
       {/* ── Content ─────────────────────────────────── */}
       <main className="al-content">
         {safeView === "inventory"    && <InventoryManager role={role} />}
+        {safeView === "bodega"       && (isAdmin || isSupervisor) && <BodegaManager role={role} />}
         {safeView === "dashboard"    && canAdmin && <Dashboard />}
         {safeView === "reservations" && canAdmin && <ReservationsManager />}
         {safeView === "staff"        && canAdmin && <StaffManager />}

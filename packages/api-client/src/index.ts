@@ -20,6 +20,9 @@ const API_BASE = configuredApiUrl
     ? `http://${_hostname}:3000`
     : "";
 
+/** URL del endpoint SSE de stock (no requiere autenticación). */
+export const STOCK_EVENTS_URL = `${API_BASE}/api/stock-events`;
+
 export const apiRequest = async (endpoint: string, options: RequestInit & { timeoutMs?: number } = {}) => {
   const token      = localStorage.getItem("token");
   const controller = new AbortController();

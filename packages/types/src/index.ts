@@ -18,6 +18,7 @@ export interface Product {
   price:        number | string;
   stock?:       number | null;
   category_id?: number | null;
+  tipo_stock?:  "directo" | "receta";
 }
 
 export interface Category {

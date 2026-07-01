@@ -12,6 +12,8 @@ import rolesRoutes         from "./routes/roles.routes.js";
 import settingsRoutes      from "./routes/settings.routes.js";
 import printRoutes         from "./routes/print.routes.js";
 import reservationsRoutes  from "./routes/reservations.routes.js";
+import bodegaRoutes        from "./routes/bodega.routes.js";
+import { handleStockEvents } from "./utils/stock-events.js";
 
 const app = express();
 
@@ -38,6 +40,9 @@ app.use("/api/users",        usersRoutes);
 app.use("/api/roles",        rolesRoutes);
 app.use("/api/settings",     settingsRoutes);
 app.use("/api/reservations", reservationsRoutes);
+app.use("/api/bodega",       bodegaRoutes);
+
+app.get("/api/stock-events", handleStockEvents);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
